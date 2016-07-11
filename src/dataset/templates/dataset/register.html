@@ -1,0 +1,45 @@
+{% extends "dataset/base.html" %}
+
+{% block content %}
+<h1>Account Registration</h1>
+
+{% if messages %}
+  {% include "dataset/messages.html" %}
+{% else %}
+  <div class="alert alert-info" role="alert">If you are a member of the <a href="https://h2t.anthropomatik.kit.edu/index.php" class="alert-link">H²T team</a>, you do not need to create an account. Simply use your Redmine username and password to <a href="{% url 'dataset:sign-in' %}" class="alert-link">sign in</a>.</div>
+{% endif %}
+
+<form action="{% url 'dataset:register' %}" method="post" class="form-horizontal">
+  {% csrf_token %}
+  <div class="form-group">
+    <label for="username" class="col-sm-2 control-label">Username</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="username" name="username" placeholder="Username" value="{{ username }}" autocomplete="off" autocapitalize="off" autocorrect="off">
+      <p class="help-block">The username will be visible publicly. Please make sure that you only use your real name if you are comfortable sharing it with others.</p>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="email" class="col-sm-2 control-label">Email address</label>
+    <div class="col-sm-10">
+      <input type="email" class="form-control" id="email" name="email" placeholder="Email" value="{{ email }}">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="password" class="col-sm-2 control-label">Password</label>
+    <div class="col-sm-10">
+      <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="password-repeat" class="col-sm-2 control-label">Repeat password</label>
+    <div class="col-sm-10">
+      <input type="password" class="form-control" id="password-repeat" name="password-repeat" placeholder="Password">
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="submit" class="btn btn-default">Submit</button>
+    </div>
+  </div>
+</form>
+{% endblock content %}

@@ -1,0 +1,34 @@
+{% extends "dataset/base.html" %}
+
+{% block content %}
+<h1>Sign In</h1>
+
+{% if form.errors %}
+  <div class="alert alert-danger" role="alert">No matching account found. Please try again.</div>
+{% else %}
+  <div class="alert alert-info" role="alert">If you are a member of the <a href="https://h2t.anthropomatik.kit.edu/index.php" class="alert-link">H²T team</a>, you do not need to create an account. Simply use your Redmine username and password to sign in.</div>
+{% endif %}
+
+<form method="post" action="{% url 'dataset:sign-in' %}" class="form-horizontal">
+  {% csrf_token %}
+  <div class="form-group">
+    <label for="username" class="col-sm-2 control-label">Username or Email</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="username" name="{{ form.username.name }}" placeholder="Username or Email" autocomplete="off" autocapitalize="off" autocorrect="off">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="password" class="col-sm-2 control-label">Password</label>
+    <div class="col-sm-10">
+      <input type="password" class="form-control" id="password" name="{{ form.password.name }}" placeholder="Password">
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="submit" value="login" class="btn btn-default">Submit</button>
+      <p class="help-block">If you don't have an account yet, you can <a href="{% url 'dataset:register' %}">create one</a>.</p>
+    </div>
+  </div>
+  <input type="hidden" name="next" value="/" />
+</form>
+{% endblock content %}

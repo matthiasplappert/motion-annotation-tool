@@ -1,0 +1,67 @@
+{% extends "dataset/base.html" %}
+{% load staticfiles %}
+{% load l10n %}
+
+{% block content %}
+<script src="{% static "js/three.min.js" %}"></script>
+<script src="{% static "js/controls.min.js" %}"></script>
+<script src="{% static "js/viewer.min.js" %}"></script>
+<script>$(document).ready(initViewer('{{ motion_file_url }}'));</script>
+
+<div class="panel panel-default">
+  <div class="panel-body">
+    <div class="progress" style="margin:0;">
+      <div class="progress-bar progress-bar-{{ level_class }}" role="progressbar" aria-valuenow="{{ level_progress }}" aria-valuemin="0" aria-valuemax="100" style="width:{{ level_progress }}%;min-width:1%;">
+        {{ level_progress}}%
+      </div>
+    </div>
+    <div class="hidden-xs text-center" style="margin-top:10px;">
+      Your current level is <strong class="text-{{ level_class }}">{{ level_name }}</strong> and you have annotated <strong>{{ user_count_annotations }} motions</strong>. That means that you currently rank as <strong>#{{ user_rank }}</strong> out of all {{ total_count_users }} users.
+    </div>
+    <div class="visible-xs-block text-center" style="margin-top:10px;">
+      Your current level is <strong class="text-{{ level_class }}">{{ level_name }}</strong>, ranking as <strong>#{{ user_rank }}</strong>.
+    </div>
+  </div>
+</div>
+
+<h1>Motion {{ motion_file.id|unlocalize }}</h1>
+
+{% include "dataset/messages.html" %}
+
+<div class="row">
+	<div class="col-md-8" id="annotate-motion">
+	    {% include "dataset/viewer.html" %}
+  	    <p class="small text-muted"><strong>Controls</strong>: The left mouse button rotates the camera and the mouse wheel zooms in and out. The slider below the motion can be used to move to a specific time step.</p>
+  	</div>
+  	<div class="col-md-4">
+  		<form action="{% url 'dataset:index' %}" method="post" id="motion-annotation-form">
+			{% csrf_token %}
+			<div class="form-group{% if invalid %} has-error{% endif %}">
+    			<label class="control-label" for="description">Description of motion</label>
+    			<textarea autofocus rows="4" name="description" id="description" class="form-control" onkeydown="if (event.keyCode == 13) { event.preventDefault(); document.getElementById('motion-annotation-form').submit(); }">{% if description %}{{ description }}{% endif %}</textarea>
+    			<p class="help-block">Describe here what motion you can see to the left. Please provide a <strong>single, complete sentence in English</strong> that describes the motion <strong>as accurately as possible</strong>.</p>
+          <p class="help-block">Please describe directions (e.g. <em>left</em> and <em>right</em>) <strong>relative to the subject</strong>.</p>
+    			<p class="help-block">Here are a couple of examples:</p>
+    			<ul class="help-block">
+    			  <li><em>&ldquo;A human performs a jump to the left.&rdquo;</em></li>
+    			  <li><em>&ldquo;Someone jumps to the left.&rdquo;</em></li>
+    			  <li><em>&ldquo;A person jumps approximately 10 centimeters to the left.&rdquo;</em></li>
+    			</ul>
+          <p class="help-block"><strong class="text-danger">Please note:</strong> Some motions start and end with the subject in T-pose. <strong>You do not have to describe this!</strong> This is only necessary in order to calibrate the motion capture system and not part of the motion.
+  			</div>
+			<input type="submit" value="Submit description" class="btn btn-primary">
+			<span class="skip-annotation small text-muted">or <a href="{% url 'dataset:index' %}?skip={{ motion_file.id }}">skip</a> for now</span>
+			<input type="hidden" name="motion_file_id" value="{{ motion_file.id }}">
+			<input type="hidden" name="start_time" value="{{ start_time }}">
+      <p class="broken-annotation small text-muted">Do you have a problem viewing or annotating this motion? <a href="{% url 'dataset:index' %}?broken={{ motion_file.id }}">Report it as broken</a>.</p>
+		</form>
+  	</div>
+</div>
+
+<!--
+Debug information:
+perplexity = {{ motion_file.mean_perplexity }} (mean = {{ overall_mean_perplexity }})
+number of annotations = {{ motion_file.annotation_count }}
+-->
+
+{% endblock content %}

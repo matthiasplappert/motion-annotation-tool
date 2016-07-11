@@ -1,0 +1,145 @@
+.navbar {
+  margin-bottom: 20px;
+}
+
+#annotate-motion #motion {
+	height: 490px;
+}
+
+#example-motion #motion {
+	height: 240px;
+}
+
+#motion-loading {
+	height: 100%;
+}
+
+#annotate-motion #motion-content {
+	height: 400px;
+}
+
+#example-motion #motion-content {
+	height: 200px;
+}
+
+#motion-ui {
+	padding-top: 20px;
+}
+
+#example-motion #motion-ui {
+	display: none;
+}
+
+#motion-ui table {
+	width: 100%;
+}
+
+#motion-ui table .left {
+	padding-right: 20px;
+}
+
+#motion-ui table .right {
+	width: 80px;
+}
+
+#motion-ui input[type="button"] {
+	width: 100%;
+}
+
+.skip-annotation {
+	padding-left: 30px;
+}
+
+.broken-annotation {
+    padding-top: 40px;
+}
+
+.glyphicon-refresh-animate {
+    -animation: spin 1s infinite linear;
+    -webkit-animation: spin2 1s infinite linear;
+}
+
+@-webkit-keyframes spin2 {
+    from { -webkit-transform: rotate(0deg);}
+    to { -webkit-transform: rotate(360deg);}
+}
+
+@keyframes spin {
+    from { transform: scale(1) rotate(0deg);}
+    to { transform: scale(1) rotate(360deg);}
+}
+
+.vertical-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.number {
+	behavior: url(PIE.htc); /* for IE8 */
+    border-radius: 50%;
+    float: left;
+    width: 50px;
+    height: 50px;
+    line-height: 46px;
+    margin: 5px 20px 5px 0;
+
+    color: #fff;
+  	background-color: #337ab7;
+  	border: 2px solid #2e6da4;
+    
+    text-align: center;
+    
+    font-size: 32px;
+}
+
+.text-bold {
+    font-weight: bold;
+}
+
+/* Custom page footer */
+.footer {
+  padding-top: 19px;
+  margin-top: 29px;
+  color: #777;
+  border-top: 1px solid #e5e5e5;
+}
+
+/* http://stackoverflow.com/questions/11815081/how-can-i-add-a-line-between-two-columns-using-twitter-bootstraps-grid-system */
+.border-between > [class*='col-']:before,
+.border-between > [class*='col-']:after {
+    background: #d4d4d4;
+    bottom: 0;
+    content: " ";
+    position: absolute;
+    width: 1px;
+    top: 0;
+}
+.border-between > [class*='col-']:before {
+    left: 0;
+}
+.border-between > [class*='col-']:after {
+    right: -1px;
+}
+.border-between > [class*='col-']:first-child:before,
+.border-between > [class*='col-']:last-child:after {
+    display: none;
+}
+
+h2 {
+	margin: 40px 0 20px;
+}
+
+#webgl-error-message {
+    text-align: center;
+    color: red;
+    width: 90%;
+    margin: 5em auto 0;
+    font-family: monospace;
+}
+
+#webgl-error-message a {
+    color: red;
+    font-weight: bold;
+    text-decoration: underline;
+}

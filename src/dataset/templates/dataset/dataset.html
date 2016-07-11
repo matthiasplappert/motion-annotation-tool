@@ -1,0 +1,383 @@
+{% extends "dataset/base.html" %}
+
+{% block content %}
+<script type="text/javascript">hljs.initHighlightingOnLoad();</script>
+<script type="text/javascript">
+  $('body').scrollspy({
+    target: '.bs-docs-sidebar',
+    offset: 40
+});
+</script>
+
+<div class="row">
+    <!--Main Content -->
+    <div class="col-md-9">
+
+<h1>The KIT Motion-Language Dataset</h1>
+<p class="lead">Linking human motion and natural language is of great interest for the generation of semantic representations of human activities as well as for the generation of robot activities based on natural language input. However, while there have been years of research in this area, no standardized and openly available dataset exists to support the development and evaluation of such systems. We therefore propose the <em>KIT Motion-Language Dataset</em>, which is large, open, and extensible.</p>
+
+<section id="downloads" class="group">
+<h2>Downloads</h2>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th>Number of Motions</th>
+      <th>Number of Annotations</th>
+      <th>Size</th>
+      <th>Download</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for dataset in datasets %}
+    <tr>
+      <td>{{ dataset.creation_date | date }} {% if forloop.counter0 == 0 %}<span class="label label-default">Latest</span>{% endif %}</td>
+      <td>{{ dataset.nb_motions }}</td>
+      <td>{{ dataset.nb_annotations }}</td>
+      <td>{{ dataset.filesize | filesizeformat }}</td>
+      <td><a href="{% url 'dataset:download_dataset' dataset.id %}">{{ dataset.filename }}</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</section>
+
+<section id="dataset-content" class="group">
+<h2>Dataset Content</h2>
+<p>The content of the extracted dataset looks like this:</p>
+<pre>
+00001_annotations.json
+00001_meta.json
+00001_mmm.xml
+00001_raw.c3d
+00002_annotations.json
+00002_meta.json
+00002_mmm.xml
+00002_raw.c3d
+00003_annotations.json
+00003_meta.json
+00003_mmm.xml
+00003_raw.c3d
+...
+03966_annotations.json
+03966_meta.json
+03966_mmm.xml
+03966_raw.c3d
+</pre>
+<p>Each file is prefixed with an ID followed by its type: <code>&lt;id&gt;_&lt;type&gt;.&lt;ext&gt;</code>. Please notice that the IDs are not necessarily consecutive. However, each ID is unique and for each ID, there are always exactly four types of files. The format and contents of the available files are explained below.</p>
+
+<div id="dataset-content-raw" class="subgroup">
+<h3>Raw Motion Data (<code>&lt;id&gt;_raw.&lt;ext&gt;</code>)</h3>
+<p>The format of the raw motion data depends on the data source. Currently, the dataset only contains <a href="http://c3d.org">C3D files</a>. However, since this might change in the future, we recommend that you use the unified MMM representation instead.</p>
+<p>Currently, our dataset contains motion data from the following data sources:</p>
+<ul>
+  <li><a href="https://motion-database.humanoids.kit.edu/">KIT Whole-Body Human Motion Database</a></li>
+  <li><a href="http://mocap.cs.cmu.edu/">CMU Graphics Lab Motion Capture Database</a></li>
+</ul>
+</div>
+
+<div id="dataset-content-mmm" class="subgroup">
+<h3>MMM Motion Data (<code>&lt;id&gt;_mmm.xml</code>)</h3>
+<p>The motions are available as XML files that represent the motion using the Master Motor Map (MMM) framework.
+We recommend that you always use this file when working with the motion data since it abstracts from the concrete motion capture system in use and allows you to use new data sources in the future without effort.
+An comprehensive documentation of the data format is available on the <a href="http://mmm.humanoids.kit.edu/dataformat.html">MMM website</a>. Please refer to this documentation for details. We also provide a simple Python example (see below) that parses the most important parts of the XML file without any third-party dependencies.</p>
+
+<h4>Example</h4>
+<pre><code class="xml">&lt;?xml version='1.0'?&gt;
+&lt;MMM&gt;
+    &lt;Motion name='subject_id_4'&gt;
+        &lt;Model&gt;
+            &lt;File&gt;mmm.xml&lt;/File&gt;
+        &lt;/Model&gt;
+        &lt;ModelProcessorConfig type='Winter'&gt;
+            &lt;Height&gt;1.82&lt;/Height&gt;
+            &lt;Mass&gt;100&lt;/Mass&gt;
+        &lt;/ModelProcessorConfig&gt;
+        &lt;JointOrder&gt;
+            &lt;Joint name='BLNx_joint'/&gt;
+            &lt;Joint name='BLNy_joint'/&gt;
+            &lt;Joint name='BLNz_joint'/&gt;
+            &lt;Joint name='BPx_joint'/&gt;
+            &lt;Joint name='BPy_joint'/&gt;
+            &lt;Joint name='BPz_joint'/&gt;
+            &lt;Joint name='BTx_joint'/&gt;
+            &lt;Joint name='BTy_joint'/&gt;
+            &lt;Joint name='BTz_joint'/&gt;
+            &lt;Joint name='BUNx_joint'/&gt;
+            &lt;Joint name='BUNy_joint'/&gt;
+            &lt;Joint name='BUNz_joint'/&gt;
+            &lt;Joint name='LAx_joint'/&gt;
+            &lt;Joint name='LAy_joint'/&gt;
+            &lt;Joint name='LAz_joint'/&gt;
+            &lt;Joint name='LEx_joint'/&gt;
+            &lt;Joint name='LEz_joint'/&gt;
+            &lt;Joint name='LHx_joint'/&gt;
+            &lt;Joint name='LHy_joint'/&gt;
+            &lt;Joint name='LHz_joint'/&gt;
+            &lt;Joint name='LKx_joint'/&gt;
+            &lt;Joint name='LSx_joint'/&gt;
+            &lt;Joint name='LSy_joint'/&gt;
+            &lt;Joint name='LSz_joint'/&gt;
+            &lt;Joint name='LWx_joint'/&gt;
+            &lt;Joint name='LWy_joint'/&gt;
+            &lt;Joint name='LFx_joint'/&gt;
+            &lt;Joint name='LMrot_joint'/&gt;
+            &lt;Joint name='RAx_joint'/&gt;
+            &lt;Joint name='RAy_joint'/&gt;
+            &lt;Joint name='RAz_joint'/&gt;
+            &lt;Joint name='REx_joint'/&gt;
+            &lt;Joint name='REz_joint'/&gt;
+            &lt;Joint name='RHx_joint'/&gt;
+            &lt;Joint name='RHy_joint'/&gt;
+            &lt;Joint name='RHz_joint'/&gt;
+            &lt;Joint name='RKx_joint'/&gt;
+            &lt;Joint name='RSx_joint'/&gt;
+            &lt;Joint name='RSy_joint'/&gt;
+            &lt;Joint name='RSz_joint'/&gt;
+            &lt;Joint name='RWx_joint'/&gt;
+            &lt;Joint name='RWy_joint'/&gt;
+            &lt;Joint name='RFx_joint'/&gt;
+            &lt;Joint name='RMrot_joint'/&gt;
+        &lt;/JointOrder&gt;
+        &lt;MotionFrames&gt;
+            &lt;MotionFrame&gt;
+                &lt;Timestep&gt;0&lt;/Timestep&gt;
+                &lt;RootPosition&gt;1142.97 -252.854 973.526&lt;/RootPosition&gt;
+                &lt;RootRotation&gt;-0.0735726 -0.0238353 1.64312&lt;/RootRotation&gt;
+                &lt;JointPosition&gt;-0.612953 0.0476239 0.212333 0.161793 0.0028466 0.0190509 -0.0479624 -0.0228922 -0.0694337 0.387513 -0.0018089 0.135106 0.158669 -0.324085 -0.165832 0.35672 -0.0738947 0.103075 0.0545089 0.135437 -0.221003 -0.154341 0.179823 -0.279305 0.0844597 -0.254741 -0.122429 0.224831 0.0616969 0.324959 -0.483339 0.308075 0.857774 0.00596291 0.0430199 0.373412 -0.021832 -0.11818 -0.083582 -0.152354 0.120838 0.373251 -0.0313812 -0.261799 &lt;/JointPosition&gt;
+                &lt;JointVelocity&gt;0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 &lt;/JointVelocity&gt;
+                &lt;JointAcceleration&gt;0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 &lt;/JointAcceleration&gt;
+            &lt;/MotionFrame&gt;
+            &lt;MotionFrame&gt;
+                &lt;Timestep&gt;0.01&lt;/Timestep&gt;
+                &lt;RootPosition&gt;1142.89 -252.863 973.795&lt;/RootPosition&gt;
+                &lt;RootRotation&gt;-0.0752048 -0.0231932 1.64472&lt;/RootRotation&gt;
+                &lt;JointPosition&gt;-0.651594 -0.142824 0.211258 0.17367 0.000509898 0.0173047 -0.0596829 -0.0227031 -0.0701363 0.471133 0.261797 0.116722 0.155988 -0.323779 -0.172119 0.356309 -0.0834862 0.106037 0.0545055 0.139367 -0.222049 -0.151358 0.178517 -0.269665 0.0925315 -0.257984 -0.113151 0.221422 0.0603637 0.326164 -0.478189 0.309305 0.879796 0.00786525 0.0430097 0.363636 -0.0238971 -0.115228 -0.0827109 -0.163222 0.134703 0.373612 -0.021385 -0.261799 &lt;/JointPosition&gt;
+                &lt;JointVelocity&gt;0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 &lt;/JointVelocity&gt;
+                &lt;JointAcceleration&gt;0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 &lt;/JointAcceleration&gt;
+            &lt;/MotionFrame&gt;
+
+            &lt;!-- More &lt;MotionFrame&gt; elements follow --&gt;
+
+        &lt;/MotionFrames&gt;
+    &lt;/Motion&gt;
+&lt;/MMM&gt;
+</code></pre>
+</div>
+
+<div id="dataset-content-annotations" class="subgroup">
+<h3>Annotation Data (<code>&lt;id&gt;_annotations.json</code>)</h3>
+<p>The annotations for each motion are available as strings in a very simple JSON array. One motion can have many motions. Notice also that we include motions that haven't been annotated yet in the dataset, which means that the array may also contain zero elements.</p>
+
+<h4>Example</h4>
+<pre><code class="json">[
+    "A person walks.",
+    "a person walks four steps forward"
+]</code></pre>
+</div>
+
+<div id="dataset-content-meta" class="subgroup">
+<h3>Metadata (<code>&lt;id&gt;_meta.json</code>)</h3>
+<p>The metadata for each entry is provided as a simple JSON dictionary. It links each entry to the Motion Annotation Tool and to the source database of the motion. This information is useful if you need to look up additional data from the database, e.g. the subject's height or weight.</p>
+
+<h4>Example</h4>
+<pre><code class="json">{  
+    "motion_annotation_tool":{  
+        "id":3966,
+        "annotation_ids":[  
+            5524
+        ]
+    },
+    "nb_annotations":1,
+    "source":{  
+        "mirror_database":{  
+            "identifier":"kit",
+            "motion_file_id":53570,
+            "motion_id":1149
+        },
+        "institution":{  
+            "identifier":"cmu",
+            "name":"Carnegie Mellon University"
+        },
+        "database":{  
+            "identifier":"cmu",
+            "motion_file_id":38,
+            "motion_id":127
+        }
+    }
+}</code></pre>
+<p>Notice that the <code>mirror_database</code> entry is not always available.</p>
+<p>You can use the <a href="https://www.zeroc.com/">Ice interface</a> of the <a href="https://motion-database.humanoids.kit.edu/">KIT Whole-Body Human Motion Database</a> to obtain additional information on each motion. The Ice interface can be used with a wide variety of different programming and scripting languages. You can use the the <code>motion_id</code> entry from the metadata dictionary to obtain the corresponding ID for each motion. Additional information as well as the necessary Ice interface specification is available <a href="https://motion-database.humanoids.kit.edu/faq/#access_methods">here</a>.
+</div>
+</section>
+
+<section id="python-example" class="group">
+<h2>Python Example</h2>
+<p>We provide a simple example that illustrates how the entire dataset can be loaded using Python. The only dependency that we use is <code>numpy</code>.
+
+<pre><code class="python">import argparse
+import os
+import json
+import xml.etree.cElementTree as ET
+import logging
+
+import numpy as np
+
+
+def parse_motions(path):
+    xml_tree = ET.parse(path)
+    xml_root = xml_tree.getroot()
+    xml_motions = xml_root.findall('Motion')
+    motions = []
+
+    if len(xml_motions) &gt; 1:
+        logging.warn('more than one &lt;Motion&gt; tag in file &quot;%s&quot;, only parsing the first one', path)
+    motions.append(_parse_motion(xml_motions[0], path))
+    return motions
+
+
+def _parse_motion(xml_motion, path):
+    xml_joint_order = xml_motion.find('JointOrder')
+    if xml_joint_order is None:
+        raise RuntimeError('&lt;JointOrder&gt; not found')
+
+    joint_names = []
+    joint_indexes = []
+    for idx, xml_joint in enumerate(xml_joint_order.findall('Joint')):
+        name = xml_joint.get('name')
+        if name is None:
+            raise RuntimeError('&lt;Joint&gt; has no name')
+        joint_indexes.append(idx)
+        joint_names.append(name)
+
+    frames = []
+    xml_frames = xml_motion.find('MotionFrames')
+    if xml_frames is None:
+        raise RuntimeError('&lt;MotionFrames&gt; not found')
+    for xml_frame in xml_frames.findall('MotionFrame'):
+        frames.append(_parse_frame(xml_frame, joint_indexes))
+
+    return joint_names, frames
+
+
+def _parse_frame(xml_frame, joint_indexes):
+    n_joints = len(joint_indexes)
+    xml_joint_pos = xml_frame.find('JointPosition')
+    if xml_joint_pos is None:
+        raise RuntimeError('&lt;JointPosition&gt; not found')
+    joint_pos = _parse_list(xml_joint_pos, n_joints, joint_indexes)
+
+    return joint_pos
+
+
+def _parse_list(xml_elem, length, indexes=None):
+    if indexes is None:
+        indexes = range(length)
+    elems = [float(x) for idx, x in enumerate(xml_elem.text.rstrip().split(' ')) if idx in indexes]
+    if len(elems) != length:
+        raise RuntimeError('invalid number of elements')
+    return elems
+
+
+def main(args):
+    input_path = args.input
+    
+    print('Scanning files ...')
+    files = [f for f in os.listdir(input_path) if os.path.isfile(os.path.join(input_path, f)) and f[0] != '.']
+    basenames = list(set([os.path.splitext(f)[0].split('_')[0] for f in files]))
+    print('done, {} potential motions and their annotations found'.format(len(basenames)))
+    print('')
+
+    # Parse all files.
+    print('Processing data in &quot;{}&quot; ...'.format(input_path))
+    all_ids = []
+    all_motions = []
+    all_annotations = []
+    all_metadata = []
+    reference_joint_names = None
+    for idx, basename in enumerate(basenames):
+        print('  {}/{} ...'.format(idx + 1, len(basenames))),
+
+        # Load motion.
+        mmm_path = os.path.join(input_path, basename + '_mmm.xml')
+        assert os.path.exists(mmm_path)
+        joint_names, frames = parse_motions(mmm_path)[0]
+        if reference_joint_names is None:
+            reference_joint_names = joint_names[:]
+        elif reference_joint_names != joint_names:
+            print('skipping, invalid joint_names {}'.format(joint_names))
+            continue
+        
+        # Load annotation.
+        annotations_path = os.path.join(input_path, basename + '_annotations.json')
+        assert os.path.exists(annotations_path)
+        with open(annotations_path, 'r') as f:
+            annotations = json.load(f)
+
+        # Load metadata.
+        meta_path = os.path.join(input_path, basename + '_meta.json')
+        assert os.path.exists(meta_path)
+        with open(meta_path, 'r') as f:
+            meta = json.load(f)
+
+        assert len(annotations) == meta['nb_annotations']
+        all_ids.append(int(basename))
+        all_motions.append(np.array(frames, dtype='float32'))
+        all_annotations.append(annotations)
+        all_metadata(meta)
+        print('done')
+    assert len(all_motions) == len(all_annotations)
+    assert len(all_motions) == len(all_ids)
+    print('done, successfully processed {} motions and their annotations'.format(len(all_motions)))
+    print('')
+
+    # At this point, you can do anything you want with the motion and annotation data.
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='')
+    parser.add_argument('input', type=str)
+    main(parser.parse_args())
+</code></pre>
+<p>Notice that this only parses the joint values of the MMM file. You can also use the MMM framework to do much more with the data. Please refer to the <a href="http://mmm.humanoids.kit.edu/">MMM documentation</a> for details.</p>
+</section>
+
+<section id="useful-software" class="group">
+<h2>Useful Software</h2>
+<ul>
+  <li><a href="https://gitlab.com/groups/mastermotormap">Master Motor Map (MMM)</a>, an open-source framework for human motion (<a href="http://mmm.humanoids.kit.edu/">documentation</a>)</li>
+  <li><a href="https://gitlab.com/Simox/simox">Simox</a>, an open-source robot framework (<a href="http://simox.sourceforge.net/documentation/index.html">documentation</a>)</li>
+  <li><a href="https://gitlab.com/cmandery/pyMMM">pyMMM</a>, a Python wrapper for the MMM framework</li>
+  <li><a href="https://gitlab.com/cmandery/pySimox">pySimox</a>, a Python wrapper for Simox</li>
+  <li><a href="https://pypi.python.org/pypi/c3d/0.2.1">c3d</a>, a Python library for reading and writing <a href="http://www.c3d.org/">C3D files</a></li>
+</ul>
+</section>
+
+</div>
+
+<!--Nav Bar -->
+    <nav class="col-md-3 bs-docs-sidebar">
+        <ul id="sidebar" class="nav nav-stacked fixed">
+            <li>
+                <a href="#downloads">Downloads</a>
+            </li>
+            <li>
+                <a href="#dataset-content">Dataset Content</a>
+                <ul class="nav nav-stacked">
+                    <li><a href="#dataset-content-raw">Raw Motion Data</a></li>
+                    <li><a href="#dataset-content-mmm">MMM Motion Data</a></li>
+                    <li><a href="#dataset-content-annotations">Annotation Data</a></li>
+                    <li><a href="#dataset-content-meta">Metadata</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#python-example">Python Example</a>
+            </li>
+            <li>
+                <a href="#useful-software">Useful Software</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+{% endblock %}

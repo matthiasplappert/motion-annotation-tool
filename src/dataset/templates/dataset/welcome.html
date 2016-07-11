@@ -1,0 +1,47 @@
+{% extends "dataset/base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+<script src="{% static "js/three.min.js" %}"></script>
+<script src="{% static "js/controls.min.js" %}"></script>
+<script src="{% static "js/viewer.min.js" %}"></script>
+<script>$(document).ready(initViewer('{% static "motions/0059ac190ecdcf04e0700e9c9827bf3e917bbddd.json" %}', true, new THREE.Vector3(20, 0, 15), new THREE.Vector3(0, 0, 10)));</script>
+
+<h1>Welcome</h1>
+<p class="lead">The goal of this website is to annotate human whole-body motion with natural language. This dataset will hopefully enable us to learn a mapping between motion and language. Such a mapping would be pretty useful since it would allow us to generate motion from natural language, for example in a humanoid robot. However, we need your help to collect it!</p>
+
+<h2>Getting Started</h2>
+<div class="row border-between">
+  <div class="col-md-4">
+  	<div class="number">1</div>
+  	<p>You'll first need an account. But don't worry, creating one is very easy and completely hassle-free. Simply <a href="{% url 'dataset:register' %}">sign up</a>.</p>
+  	<p>If you are a member of the <a href="https://h2t.anthropomatik.kit.edu/index.php" class="alert-link">H²T team</a>, you don't even need to do that. Just <a href="{% url 'dataset:sign-in' %}">sign in</a> with your Redmine account!<p>
+  </div>
+  <div class="col-md-4">
+    <div class="number">2</div>
+    <p>As soon as you are signed in, we'll start showing you human whole-body motions like the one below.<p>
+    <div id="example-motion">
+      {% include "dataset/viewer.html" %}
+    </div>
+    <p>We've made sure that you can inspect the motion as necessary. You can use the <em>left mouse button</em> to rotate the camera.
+    Use the <em>mouse wheel</em> to zoom in and out. You can familiarize yourself with the controls in the example above. Give it a try now, it's fun!<p>
+  </div>
+  <div class="col-md-4">
+    <div class="number">3</div>
+    <p>The annotation process is really simple: After we've shown you a motion (like the one on the left), we ask you tell us in a single sentence and in plain English what you see. That's it!</p>
+    <p>To give you a concrete example, a possible annotation for the motion that you're watching right now could be:</p>
+    <blockquote>
+  		<p>&ldquo;A person performs a single squat.&rdquo;</p>
+	</blockquote>
+	<p>To make sure that the data we collect is consistent, we ensure that only a single sentence is entered and that the majority of words are spelled correctly.</p>
+  </div>
+</div>
+
+<h2>Additional Information</h2>
+<p>If you are interested, we are more than happy to give you more details of the nature and the purpose of this dataset. All motions were recorded at the <a href="https://h2t.anthropomatik.kit.edu/index.php">High Performance Humanoid Technologies (H²T)</a>, which is part of the Faculty of Informatics at the <a href="https://kit.edu">Karlsruhe Insitute of Technology</a>. All recorded motion is freely available through the <a href="https://motion-database.humanoids.kit.edu/">KIT Whole-Body Human Motion Database</a>. While these motions are annotated with simple tags (e.g. walk, run, ...), they lack more comprehensive annotations in the form of natural language.</p>
+
+<p>This website was created during a student research program called <a href="http://formal.iti.kit.edu/projektgruppe">&ldquo;Praxis der Forschung&rdquo;</a>. During this program, several students can work on a project for two semesters and hopefully arrive at interesting results. In our case, we are interested in a better understanding of human motion and natural language. More precisely, we are interested in learning a bidirectional mapping that would allow us to essentially translate between motion and language. Such a system would be extremely useful in various scenarios. Imagine, for example, a humanoid robot that would be able to perform a motion in response to a command uttered in natural language.</p>
+
+<p>To work on this project, we need a large dataset. This is why we created this website to help us annotate existing motions with natural language. We can then use this dataset to train machines to understand the connection between motion and language using machine learning techniques. We also plan to make this dataset freely available to everybody, so that everybody can experiment with it.</p>
+
+{% endblock content %}

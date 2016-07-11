@@ -1,0 +1,72 @@
+{% extends "dataset/base.html" %}
+
+{% block content %}
+<h1>Statistics</h1>
+
+<h2>Overall Progress</h2>
+<div class="progress">
+  <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ percentage_complete }}" aria-valuemin="0" aria-valuemax="100" style="width:{{ percentage_complete }}%;max-width:100%;">{{ percentage_complete }}%</div>
+</div>
+<p class="text-center">Out of all <strong>{{ total_motions }}</strong> motions, <strong>{{ distinct_annotations}}</strong> have been annotated at least once.</p>
+
+<h2>Leaderboard</h2>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Rank</th>
+      <th>Username</th>
+      <th>Level</th>
+      <th colspan="2">Number of Annotations</th>
+      <th colspan="2">Overall Progress</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for user in users %}
+    <tr class="{% if request.user.id == user.id %}info text-bold{% endif %}">
+      <th style="width:5%;">{{ user.rank }}</th>
+      <td style="width:20%;">
+        {% if user.id == request.user.id %}<strong>{% endif %}{{ user.username }} {% if not user.email %}<span class="small text-muted">(H²T)</span>{% endif %}{% if user.id == request.user.id %}</strong>{% endif %}
+      </td>
+      <td style="width:20%;">
+        <span class="text-{{ user.level_class }}">{{ user.level_name }}</span>
+      </td>
+      <td style="width:15%;">
+        <div class="progress" style="margin:0;">
+          <div class="progress-bar progress-bar-{{ user.level_class }}" role="progressbar" aria-valuenow="{{ user.progress }}" aria-valuemin="0" aria-valuemax="100" style="width:{{ user.progress }}%;"></div>
+        </div>
+      </td>
+      <td style="width:10%;">{{ user.annotation_count }}</td>
+      <td style="width:15%;">
+        <div class="progress" style="margin:0;">
+          <div class="progress-bar progress-bar-{{ user.level_class }}" role="progressbar" aria-valuenow="{{ user.total_progress }}" aria-valuemin="0" aria-valuemax="100" style="width:{{ user.total_progress }}%;"></div>
+        </div>
+      </td>
+      <td style="width:10%;">{{ user.total_progress }}%</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h2>By the Numbers</h2>
+<table class="table table-striped">
+  <tbody>
+    <tr>
+      <th>Number of users</th>
+      <td>{{ total_users }}</td>
+    </tr>
+    <tr>
+      <th>Number of motions</th>
+      <td>{{ total_motions }}</td>
+    </tr>
+    <tr>
+      <th>Number of annotations</th>
+      <td>{{ total_annotations }}</td>
+    </tr>
+    <tr>
+      <th>Average number of annotations per motion</th>
+      <td>{{ annotations_per_motion|floatformat:3 }}</td>
+    </tr>
+  </tbody>
+</table>
+
+{% endblock %}
