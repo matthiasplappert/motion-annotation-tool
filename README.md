@@ -1,7 +1,7 @@
 # Motion Annotation Tool
 
-- [https://motion-annotation.humanoids.kit.edu](https://motion-annotation.humanoids.kit.edu)
-- Paper: [https://arxiv.org/abs/1607.03827](The KIT Motion-Language Dataset)
+- Live: [https://motion-annotation.humanoids.kit.edu](https://motion-annotation.humanoids.kit.edu)
+- Paper: [The KIT Motion-Language Dataset](https://arxiv.org/abs/1607.03827)
 
 ## Installation
 
