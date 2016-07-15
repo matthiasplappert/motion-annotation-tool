@@ -37,13 +37,17 @@
         </div>
 
         <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
           {% if request.user.is_authenticated %}
-           <ul class="nav navbar-nav">
             <li class="{% ifequal request.path '/' %}active{% endifequal %}"><a href="/">Annotate <span class="sr-only">(current)</span></a></li>
             <li class="{% ifequal request.path '/stats/' %}active{% endifequal %}"><a href="{% url 'dataset:stats' %}">Statistics</a></li>
-          </ul>
           {% else %}
-          <p class="navbar-text">by the <a href="https://h2t.anthropomatik.kit.edu">H²T lab</a> at <a href="https://kit.edu">KIT</a></p>
+            <li class="{% ifequal request.path '/' %}active{% endifequal %}"><a href="/">Welcome <span class="sr-only">(current)</span></a></li>
+          {% endif %}
+            <li class="{% ifequal request.path '/dataset/' %}active{% endifequal %}"><a href="{% url 'dataset:dataset' %}">Dataset <span class="sr-only">(current)</span></a></li>
+          </ul>
+          {% if not request.user.is_authenticated %}
+            <p class="navbar-text">by the <a href="https://h2t.anthropomatik.kit.edu">H²T lab</a> at <a href="https://kit.edu">KIT</a></p>
           {% endif %}
           
           {% if request.user.is_authenticated %}
