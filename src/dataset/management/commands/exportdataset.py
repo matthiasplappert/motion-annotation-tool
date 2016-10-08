@@ -5,6 +5,7 @@ from tempfile import mkdtemp
 import json
 import zipfile
 import time
+import shutil
 
 import Glacier2
 import Ice
@@ -21,18 +22,18 @@ DATA_PATH = os.path.abspath(os.path.join(__file__, '..', '..', '..', 'static', '
 ICE_CLIENT_CONFIG_PATH = os.path.abspath(os.path.join(__file__, '..', 'client.cfg'))
 
 
-def zipdir(basedir, archivename, callback_before=None, , callback_after=None):
-    assert os.path.isdir(basedir)
-    with zipfile.ZipFile(archivename, "w", zipfile.ZIP_DEFLATED, allowZip64=True) as z:
-        for root, dirs, files in os.walk(basedir):
-            for fn in files:
-                absfn = os.path.join(root, fn)
-                zfn = absfn[len(basedir) + len(os.sep):]
-                if callback_before is not None:
-                	callback_before(zfn)
-                z.write(absfn, zfn)
-                if callback_after is not None:
-                	callback_after(zfn)
+def zipdir(basedir, archivename, callback_before=None, callback_after=None):
+	assert os.path.isdir(basedir)
+	with zipfile.ZipFile(archivename, "w", zipfile.ZIP_DEFLATED, allowZip64=True) as z:
+		for root, dirs, files in os.walk(basedir):
+			for fn in files:
+				absfn = os.path.join(root, fn)
+				zfn = absfn[len(basedir) + len(os.sep):]
+				if callback_before is not None:
+					callback_before(zfn)
+				z.write(absfn, zfn)
+				if callback_after is not None:
+					callback_after(zfn)
 
 
 class Command(BaseCommand):
@@ -113,8 +114,8 @@ class Command(BaseCommand):
 		self.stdout.write('')
 
 		# Create temporary directory.
-		output_path = mkdtemp()
-		self.stdout.write('Downloading data to "{}" ...'.format(output_path))
+		tmp_path = mkdtemp()
+		self.stdout.write('Downloading data to "{}" ...'.format(tmp_path))
 		motion_entry_cache = {}
 		nb_annotations = 0
 		nb_motions = 0
@@ -133,7 +134,7 @@ class Command(BaseCommand):
 			r.destroy()
 			if d is None:
 				return -1
-			with open(os.path.join(output_path, filename_mmm), 'wb') as f:
+			with open(os.path.join(tmp_path, filename_mmm), 'wb') as f:
 				f.write(d)
 
 			# Download C3D.
@@ -142,7 +143,7 @@ class Command(BaseCommand):
 			r.destroy()
 			if d is None:
 				return -1
-			with open(os.path.join(output_path, filename_c3d), 'wb') as f:
+			with open(os.path.join(tmp_path, filename_c3d), 'wb') as f:
 				f.write(d)
 
 			# Retrieve motion information.
@@ -153,12 +154,14 @@ class Command(BaseCommand):
 				motion_entry_cache[c3d_file.attachedToId] = motion_entry
 
 			# Save annotations and extract their IDs for metadata.
-			with open(os.path.join(output_path, filename_annotation), 'w') as f:
+			with open(os.path.join(tmp_path, filename_annotation), 'w') as f:
 				json.dump([a.description for a in annotations], f)
 			mat_annotation_ids = [a.id for a in annotations]
 				
 			# Save metadata.
-			with open(os.path.join(output_path, filename_meta), 'w') as f:
+			annotation_perplexities = [a.perplexity for a in annotations]
+			assert len(annotation_perplexities) == len(annotations)
+			with open(os.path.join(tmp_path, filename_meta), 'w') as f:
 				data = {
 					'motion_annotation_tool': {
 						'id': database_entry.id,
@@ -176,6 +179,7 @@ class Command(BaseCommand):
 						},
 					},
 					'nb_annotations': len(annotations),
+					'annotation_perplexities': annotation_perplexities,
 				}
 				if motion_entry.associatedInstitution.acronym.lower() == 'cmu':
 					# Reference actual CMU database first and provide KIT database as the mirror.
@@ -204,7 +208,7 @@ class Command(BaseCommand):
 			self.stdout.flush()
 		def callback_after(file):
 			self.stdout.write('done')
-		zipdir(output_path, os.path.join(DATA_PATH, filename), callback_before=callback_before, callback_after=callback_after)
+		zipdir(tmp_path, os.path.join(DATA_PATH, filename), callback_before=callback_before, callback_after=callback_after)
 		self.stdout.write('done')
 		self.stdout.write('')
 
@@ -215,5 +219,12 @@ class Command(BaseCommand):
 		dataset.filename = filename
 		dataset.filesize = os.path.getsize(os.path.join(DATA_PATH, filename))
 		dataset.save()
+
+		# Clean up tmp directory.
+		self.stdout.write('Cleaning up temp directory "{}" ...'.format(tmp_path), ending=' ')
+		self.stdout.flush()
+		shutil.rmtree(tmp_path)
+		self.stdout.write('done')
+		self.stdout.write('')
 
 		self.stdout.write('All done, remember to collect the static files so that people can download the dataset!')

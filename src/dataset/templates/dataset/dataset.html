@@ -43,6 +43,24 @@
 
 </section>
 
+<section id="citing" class="group">
+<h2>Citing</h2>
+If you use the KIT Motion-Language dataset, please cite the following paper:
+<pre>
+@article{DBLP:journals/corr/PlappertMA16,
+  author    = {Matthias Plappert and Christian Mandery and Tamim Asfour},
+  title     = {The {KIT} Motion-Language Dataset},
+  journal   = {CoRR},
+  volume    = {abs/1607.03827},
+  year      = {2016},
+  url       = {http://arxiv.org/abs/1607.03827},
+  timestamp = {Tue, 02 Aug 2016 12:59:27 +0200},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/corr/PlappertMA16},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+</pre>
+</section>
+
 <section id="dataset-content" class="group">
 <h2>Dataset Content</h2>
 <p>The content of the extracted dataset looks like this:</p>
@@ -179,7 +197,7 @@ An comprehensive documentation of the data format is available on the <a href="h
 
 <div id="dataset-content-meta" class="subgroup">
 <h3>Metadata (<code>&lt;id&gt;_meta.json</code>)</h3>
-<p>The metadata for each entry is provided as a simple JSON dictionary. It links each entry to the Motion Annotation Tool and to the source database of the motion. This information is useful if you need to look up additional data from the database, e.g. the subject's height or weight.</p>
+<p>The metadata for each entry is provided as a simple JSON dictionary. It links each entry to the Motion Annotation Tool and to the source database of the motion. This information is useful if you need to look up additional data from the database, e.g. the subject's height or weight. It also contains the perplexity of each annotation under a simple 3-gram language model. This allows you to find and filter out outliers.</p>
 
 <h4>Example</h4>
 <pre><code class="json">{  
@@ -189,7 +207,6 @@ An comprehensive documentation of the data format is available on the <a href="h
             5524
         ]
     },
-    "nb_annotations":1,
     "source":{  
         "mirror_database":{  
             "identifier":"kit",
@@ -205,7 +222,9 @@ An comprehensive documentation of the data format is available on the <a href="h
             "motion_file_id":38,
             "motion_id":127
         }
-    }
+    },
+    "nb_annotations":1,
+    "annotation_perplexities":[2.78172, 7.43163]
 }</code></pre>
 <p>Notice that the <code>mirror_database</code> entry is not always available.</p>
 <p>You can use the <a href="https://www.zeroc.com/">Ice interface</a> of the <a href="https://motion-database.humanoids.kit.edu/">KIT Whole-Body Human Motion Database</a> to obtain additional information on each motion. The Ice interface can be used with a wide variety of different programming and scripting languages. You can use the the <code>motion_id</code> entry from the metadata dictionary to obtain the corresponding ID for each motion. Additional information as well as the necessary Ice interface specification is available <a href="https://motion-database.humanoids.kit.edu/faq/#access_methods">here</a>.
@@ -361,6 +380,9 @@ if __name__ == '__main__':
         <ul id="sidebar" class="nav nav-stacked fixed">
             <li>
                 <a href="#downloads">Downloads</a>
+            </li>
+            <li>
+                <a href="#citing">Citing</a>
             </li>
             <li>
                 <a href="#dataset-content">Dataset Content</a>
